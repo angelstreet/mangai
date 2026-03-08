@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { RefreshCw } from 'lucide-react'
 import { IdeaCard } from '../components/idea/IdeaCard'
 import type { Idea } from '../types'
 import { API } from '../api'
@@ -41,39 +40,14 @@ export default function Feed() {
 
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '16px',
-          background: 'var(--bg)',
-          borderBottom: '1px solid var(--border)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-        }}
-      >
-        <img src="/logo.png" alt="MangAI" style={{ width: 28, height: 28 }} />
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '14px 16px', background: 'var(--bg)',
+        borderBottom: '1px solid var(--border)',
+        position: 'sticky', top: 0, zIndex: 50,
+      }}>
+        <img src="/mangai/logo.png" alt="MangAI" style={{ width: 28, height: 28 }} />
         <span style={{ fontSize: 18, fontWeight: 700 }}>MangAI</span>
-        <button
-          onClick={fetchIdeas}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            color: 'var(--muted)',
-            fontSize: 14,
-            padding: '6px 10px',
-            borderRadius: 8,
-            border: '1px solid var(--border)',
-            background: 'var(--surface2)',
-          }}
-          title="Refresh"
-        >
-          <RefreshCw size={15} />
-          Refresh
-        </button>
       </div>
 
       {/* Filter tab bar */}

@@ -4,6 +4,7 @@ const beastKing = {
   id: 'seed-beast-king',
   user_id: 'user_dev',
   title: 'Beast King',
+  tags: JSON.stringify(['Shonen', 'Action', 'Fantasy', 'Adventure']),
   hook: `Humans exist in a dinosaur-dominated world where apex predators define the food chain.\nElite protectors called Beast Kings are humanity's only shield against extinction.\nOne boy with a hidden triple-soul will change what it means to protect — or to dominate.`,
   protagonists: JSON.stringify([
     { name: 'MC (Beast King Candidate)', pitch: "Village boy, secretly 3-soul, wants to protect not dominate." },
@@ -21,12 +22,13 @@ const beastKing = {
 export async function seed(): Promise<void> {
   await db.execute({
     sql: `INSERT OR IGNORE INTO ideas
-      (id, user_id, title, hook, protagonists, sell_pitch, theme, twist, storyline)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (id, user_id, title, tags, hook, protagonists, sell_pitch, theme, twist, storyline)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       beastKing.id,
       beastKing.user_id,
       beastKing.title,
+      beastKing.tags,
       beastKing.hook,
       beastKing.protagonists,
       beastKing.sell_pitch,
@@ -43,5 +45,9 @@ export async function seed(): Promise<void> {
   await db.execute({
     sql: `UPDATE ideas SET title = ? WHERE id = ? AND (title IS NULL OR title = '')`,
     args: [beastKing.title, beastKing.id],
+  })
+  await db.execute({
+    sql: `UPDATE ideas SET tags = ? WHERE id = ? AND (tags IS NULL OR tags = '[]' OR tags = '')`,
+    args: [beastKing.tags, beastKing.id],
   })
 }

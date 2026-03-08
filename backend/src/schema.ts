@@ -39,6 +39,7 @@ export async function initSchema(): Promise<void> {
   await addColumnIfMissing('ALTER TABLE ideas ADD COLUMN follow_count INTEGER DEFAULT 0')
   await addColumnIfMissing('ALTER TABLE ideas ADD COLUMN version INTEGER DEFAULT 1')
   await addColumnIfMissing("ALTER TABLE ideas ADD COLUMN title TEXT NOT NULL DEFAULT ''")
+  await addColumnIfMissing("ALTER TABLE ideas ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'")
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS follows (

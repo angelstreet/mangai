@@ -80,19 +80,26 @@ export function IdeaCard({ idea, onClick }: IdeaCardProps) {
         </div>
       </div>
 
-      {/* Row 2: theme tag */}
-      <div style={{ marginBottom: 8 }}>
-        <span style={{
-          fontSize: 11, color: 'var(--muted)',
-          background: 'var(--surface2)', border: '1px solid var(--border)',
-          padding: '2px 8px', borderRadius: 4, letterSpacing: '0.02em',
-        }}>
-          {idea.theme}
-        </span>
-      </div>
+      {/* Row 2: genre tags */}
+      {idea.tags?.length > 0 && (
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 8 }}>
+          {idea.tags.map(tag => (
+            <span key={tag} style={{
+              fontSize: 11, fontWeight: 600, color: 'var(--muted)',
+              background: 'var(--surface2)', border: '1px solid var(--border)',
+              padding: '2px 8px', borderRadius: 20, letterSpacing: '0.02em',
+            }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
 
-      {/* Row 3: short description */}
-      <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 12 }}>
+      {/* Row 3: short description — single line */}
+      <p style={{
+        fontSize: 13, color: 'var(--muted)', marginBottom: 12,
+        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+      }}>
         {description}
       </p>
 

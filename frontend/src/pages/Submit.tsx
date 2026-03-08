@@ -11,18 +11,27 @@ interface Protagonist {
   pitch: string
 }
 
-const TOTAL_STEPS = 8
+const TOTAL_STEPS = 9
 
 const STEP_TITLES: Record<number, string> = {
   1: 'Title',
-  2: 'Hook',
-  3: 'Protagonists',
-  4: 'Sell Pitch',
-  5: 'Theme',
-  6: 'Plot Twist',
-  7: 'Storyline Engine',
-  8: 'Preview & Submit',
+  2: 'Genre Tags',
+  3: 'Hook',
+  4: 'Protagonists',
+  5: 'Sell Pitch',
+  6: 'Theme',
+  7: 'Plot Twist',
+  8: 'Storyline Engine',
+  9: 'Preview & Submit',
 }
+
+const ALL_TAGS = [
+  'Shonen', 'Shojo', 'Seinen', 'Josei',
+  'Action', 'Adventure', 'Fantasy', 'Sci-Fi',
+  'Romance', 'Horror', 'Mystery', 'Thriller',
+  'Isekai', 'Slice of Life', 'Comedy', 'Drama',
+  'Supernatural', 'Mecha', 'Sports', 'Historical',
+]
 
 const emptyProtagonist = (): Protagonist => ({ name: '', pitch: '' })
 
@@ -32,6 +41,7 @@ export default function Submit() {
 
   const [step, setStep] = useState(1)
   const [title, setTitle] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [hook, setHook] = useState('')
   const [protagonists, setProtagonists] = useState<Protagonist[]>([
     emptyProtagonist(),
@@ -84,6 +94,7 @@ export default function Submit() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
+          tags,
           hook,
           protagonists,
           sell_pitch: sellPitch,
@@ -137,8 +148,45 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 2: Hook ────────────────────────────────────────────────────────
+      // ── Step 2: Genre Tags ──────────────────────────────────────────────────
       case 2:
+        return (
+          <div style={stepWrap}>
+            <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
+            <p style={{ color: 'var(--muted)', fontSize: 14 }}>Pick up to 4 genres that describe your manga.</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {ALL_TAGS.map(tag => {
+                const selected = tags.includes(tag)
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setTags(prev =>
+                      selected ? prev.filter(t => t !== tag)
+                        : prev.length < 4 ? [...prev, tag] : prev
+                    )}
+                    style={{
+                      padding: '6px 14px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
+                      border: `1px solid ${selected ? 'var(--accent)' : 'var(--border)'}`,
+                      background: selected ? 'rgba(230,57,70,0.12)' : 'var(--surface2)',
+                      color: selected ? 'var(--accent)' : 'var(--muted)',
+                      fontWeight: selected ? 700 : 400,
+                      opacity: (!selected && tags.length >= 4) ? 0.4 : 1,
+                    }}
+                  >
+                    {tag}
+                  </button>
+                )
+              })}
+            </div>
+            {tags.length > 0 && (
+              <p style={{ fontSize: 12, color: 'var(--muted)' }}>{tags.length} / 4 selected</p>
+            )}
+            <NavButtons onBack={goBack} onNext={goNext} disabled={tags.length === 0} />
+          </div>
+        )
+
+      // ── Step 3: Hook ────────────────────────────────────────────────────────
+      case 3:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -174,8 +222,8 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 3: Protagonists ────────────────────────────────────────────────
-      case 3:
+      // ── Step 4: Protagonists ────────────────────────────────────────────────
+      case 4:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -236,8 +284,8 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 4: Sell Pitch ──────────────────────────────────────────────────
-      case 4:
+      // ── Step 5: Sell Pitch ──────────────────────────────────────────────────
+      case 5:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -259,8 +307,8 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 5: Theme ───────────────────────────────────────────────────────
-      case 5:
+      // ── Step 6: Theme ───────────────────────────────────────────────────────
+      case 6:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -281,8 +329,8 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 6: Plot Twist ──────────────────────────────────────────────────
-      case 6:
+      // ── Step 7: Plot Twist ──────────────────────────────────────────────────
+      case 7:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -311,8 +359,8 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 7: Storyline Engine ────────────────────────────────────────────
-      case 7:
+      // ── Step 8: Storyline Engine ────────────────────────────────────────────
+      case 8:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -333,8 +381,8 @@ export default function Submit() {
           </div>
         )
 
-      // ── Step 8: Preview + Submit ────────────────────────────────────────────
-      case 8:
+      // ── Step 9: Preview + Submit ────────────────────────────────────────────
+      case 9:
         return (
           <div style={stepWrap}>
             <StepHeader step={step} total={TOTAL_STEPS} title={STEP_TITLES[step]} />
@@ -343,6 +391,15 @@ export default function Submit() {
             <div className="card">
               <p className="section-label">Title</p>
               <p style={{ fontWeight: 700, fontSize: 16 }}>{title}</p>
+            </div>
+
+            <div className="card">
+              <p className="section-label">Tags</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                {tags.map(t => (
+                  <span key={t} style={{ fontSize: 12, padding: '2px 10px', borderRadius: 20, background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--muted)' }}>{t}</span>
+                ))}
+              </div>
             </div>
 
             <div className="card">

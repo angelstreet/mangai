@@ -10,6 +10,9 @@ function parseIdea(row: Record<string, unknown>) {
     protagonists: typeof row.protagonists === 'string'
       ? JSON.parse(row.protagonists)
       : row.protagonists,
+    tags: typeof row.tags === 'string'
+      ? JSON.parse(row.tags)
+      : (row.tags ?? []),
   }
 }
 
@@ -59,7 +62,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/ideas — create a new idea
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { title, hook, protagonists, sell_pitch, theme, twist, storyline, user_id } = req.body
+    const { title, tags, hook, protagonists, sell_pitch, theme, twist, storyline, user_id } = req.body
 
     if (!title || !hook || !protagonists || !sell_pitch || !theme || !storyline || !user_id) {
       res.status(400).json({ error: 'Missing required fields' })
@@ -68,11 +71,12 @@ router.post('/', async (req: Request, res: Response) => {
 
     const id = uuidv4()
     const protagonistsStr = typeof protagonists === 'string' ? protagonists : JSON.stringify(protagonists)
+    const tagsStr = typeof tags === 'string' ? tags : JSON.stringify(tags ?? [])
 
     await db.execute({
-      sql: `INSERT INTO ideas (id, user_id, title, hook, protagonists, sell_pitch, theme, twist, storyline)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [id, user_id, title, hook, protagonistsStr, sell_pitch, theme, twist ?? null, storyline],
+      sql: `INSERT INTO ideas (id, user_id, title, tags, hook, protagonists, sell_pitch, theme, twist, storyline)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [id, user_id, title, tagsStr, hook, protagonistsStr, sell_pitch, theme, twist ?? null, storyline],
     })
 
     const result = await db.execute({
@@ -90,7 +94,7 @@ router.post('/', async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { title, hook, protagonists, sell_pitch, theme, twist, storyline, user_id } = req.body
+    const { title, tags, hook, protagonists, sell_pitch, theme, twist, storyline, user_id } = req.body
 
     const current = await db.execute({ sql: 'SELECT * FROM ideas WHERE id = ?', args: [id] })
     if (!current.rows[0]) {
@@ -123,9 +127,10 @@ router.put('/:id', async (req: Request, res: Response) => {
     })
 
     // Update idea
+    const tagsStr = typeof tags === 'string' ? tags : JSON.stringify(tags ?? [])
     await db.execute({
-      sql: `UPDATE ideas SET title=?, hook=?, protagonists=?, sell_pitch=?, theme=?, twist=?, storyline=?, version=? WHERE id=?`,
-      args: [title ?? idea.title, hook, protagonistsStr, sell_pitch, theme, twist ?? null, storyline, currentVersion + 1, id],
+      sql: `UPDATE ideas SET title=?, tags=?, hook=?, protagonists=?, sell_pitch=?, theme=?, twist=?, storyline=?, version=? WHERE id=?`,
+      args: [title ?? idea.title, tagsStr, hook, protagonistsStr, sell_pitch, theme, twist ?? null, storyline, currentVersion + 1, id],
     })
 
     const updated = await db.execute({ sql: 'SELECT * FROM ideas WHERE id = ?', args: [id] })

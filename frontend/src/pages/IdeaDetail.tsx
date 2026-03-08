@@ -118,6 +118,23 @@ export default function IdeaDetail() {
           <span className="tag accent">{idea.theme}</span>
         </div>
 
+        {/* Tags */}
+        {idea.tags?.length > 0 && (
+          <div style={sectionStyle}>
+            <div className="section-label">Genres</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
+              {idea.tags.map(tag => (
+                <span key={tag} style={{
+                  fontSize: 12, fontWeight: 600, padding: '3px 12px', borderRadius: 20,
+                  background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--muted)',
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Twist (optional) */}
         {idea.twist && (
           <div style={sectionStyle}>

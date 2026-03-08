@@ -25,7 +25,7 @@ export default function Login({ onLogin }: Props) {
       background: 'var(--bg)',
     }}>
       <div style={{ marginBottom: 32, textAlign: 'center' }}>
-        <img src="/logo.png" alt="MangAI" style={{ width: 80, height: 80 }} />
+        <img src="/mangai/logo.jpg" alt="MangAI" style={{ width: 120, height: 120 }} />
         <h1 style={{ fontSize: 28, fontWeight: 800, marginTop: 8 }}>MangAI</h1>
         <p style={{ color: 'var(--muted)', marginTop: 4 }}>Structure your manga idea</p>
       </div>
