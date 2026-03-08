@@ -17,7 +17,7 @@ export default function App() {
   if (!user) return <Login onLogin={() => window.location.reload()} />
 
   return (
-    <BrowserRouter basename="/mangai">
+    <BrowserRouter basename={window.location.pathname.startsWith('/mangai') ? '/mangai' : ''}>
       <main>
         <Routes>
           <Route path="/" element={<Feed />} />

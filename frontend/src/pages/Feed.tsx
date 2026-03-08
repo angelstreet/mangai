@@ -41,13 +41,12 @@ export default function Feed() {
   return (
     <div>
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: '14px 16px', background: 'var(--bg)',
+        display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
+        padding: '0 16px 0', background: 'var(--bg)',
         borderBottom: '1px solid var(--border)',
-        position: 'sticky', top: 0, zIndex: 50,
+        position: 'sticky', top: 0, zIndex: 50, overflow: 'hidden',
       }}>
-        <img src="/mangai/logo.png" alt="MangAI" style={{ width: 28, height: 28 }} />
-        <span style={{ fontSize: 18, fontWeight: 700 }}>MangAI</span>
+        <img src="/mangai/logo.png" alt="MangAI" style={{ width: 146, height: 146, display: 'block', marginTop: -20, marginBottom: -28 }} />
       </div>
 
       {/* Filter tab bar */}

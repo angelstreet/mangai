@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Star } from 'lucide-react'
+import { Star, ChevronDown, ChevronRight } from 'lucide-react'
 import { Header } from '../components/layout/Header'
 import { ProtagonistList } from '../components/idea/ProtagonistList'
 import { VoteForm } from '../components/idea/VoteForm'
@@ -32,12 +32,50 @@ function ReadonlyStars({ score }: { score: number }) {
   )
 }
 
+function Section({
+  label,
+  defaultOpen = true,
+  extra,
+  children,
+}: {
+  label: string
+  defaultOpen?: boolean
+  extra?: React.ReactNode
+  children: React.ReactNode
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          cursor: 'pointer', marginBottom: open ? 6 : 0,
+        }}
+        onClick={() => setOpen(o => !o)}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {open
+            ? <ChevronDown size={14} color="var(--muted)" />
+            : <ChevronRight size={14} color="var(--muted)" />}
+          <span className="section-label" style={{ marginBottom: 0 }}>{label}</span>
+        </div>
+        {extra && <div onClick={e => e.stopPropagation()}>{extra}</div>}
+      </div>
+      {open && children}
+    </div>
+  )
+}
+
+const FONT_SIZES = { S: 13, M: 15, L: 18 }
+type FontSize = keyof typeof FONT_SIZES
+
 export default function IdeaDetail() {
   const { id } = useParams<{ id: string }>()
   const { userId } = useUser()
   const [idea, setIdea] = useState<Idea | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [fontSize, setFontSize] = useState<FontSize>('M')
 
   useEffect(() => {
     if (!id) return
@@ -85,44 +123,50 @@ export default function IdeaDetail() {
     )
   }
 
-  const sectionStyle: React.CSSProperties = { marginBottom: 24 }
+  const fontSizePicker = (
+    <div style={{ display: 'flex', gap: 4 }}>
+      {(['S', 'M', 'L'] as FontSize[]).map(s => (
+        <button
+          key={s}
+          onClick={() => setFontSize(s)}
+          style={{
+            fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 6,
+            border: '1px solid var(--border)',
+            background: fontSize === s ? 'var(--accent)' : 'var(--surface2)',
+            color: fontSize === s ? '#fff' : 'var(--muted)',
+            cursor: 'pointer',
+          }}
+        >{s}</button>
+      ))}
+    </div>
+  )
 
   return (
     <div>
       <Header title="Idea Detail" showBack />
       <div style={{ padding: 16 }}>
 
-        {/* Hook */}
-        <div style={sectionStyle}>
-          <div className="section-label">Hook</div>
-          <p style={{ fontSize: 17, fontWeight: 600, whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+        <Section label="Hook" extra={fontSizePicker}>
+          <p style={{ fontSize: FONT_SIZES[fontSize], whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
             {idea.hook}
           </p>
-        </div>
+        </Section>
 
-        {/* Protagonists */}
-        <div style={sectionStyle}>
-          <div className="section-label">Protagonists</div>
+        <Section label="Protagonists">
           <ProtagonistList protagonists={idea.protagonists} />
-        </div>
+        </Section>
 
-        {/* Sell Pitch */}
-        <div style={sectionStyle}>
-          <div className="section-label">Pitch</div>
+        <Section label="Synopsis">
           <p style={{ lineHeight: 1.6 }}>{idea.sell_pitch}</p>
-        </div>
+        </Section>
 
-        {/* Theme */}
-        <div style={sectionStyle}>
-          <div className="section-label">Theme</div>
-          <span className="tag accent">{idea.theme}</span>
-        </div>
+        <Section label="Theme">
+          <p style={{ lineHeight: 1.6 }}>🚩 {idea.theme}</p>
+        </Section>
 
-        {/* Tags */}
         {idea.tags?.length > 0 && (
-          <div style={sectionStyle}>
-            <div className="section-label">Genres</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
+          <Section label="Genres">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
               {idea.tags.map(tag => (
                 <span key={tag} style={{
                   fontSize: 12, fontWeight: 600, padding: '3px 12px', borderRadius: 20,
@@ -132,36 +176,24 @@ export default function IdeaDetail() {
                 </span>
               ))}
             </div>
-          </div>
+          </Section>
         )}
 
-        {/* Twist (optional) */}
         {idea.twist && (
-          <div style={sectionStyle}>
-            <div className="section-label">Plot Twist</div>
+          <Section label="Plot Twist">
             <p style={{ fontStyle: 'italic', lineHeight: 1.6, color: 'var(--muted)' }}>
               {idea.twist}
             </p>
-          </div>
+          </Section>
         )}
 
-        {/* Storyline */}
-        <div style={sectionStyle}>
-          <div className="section-label">Storyline Engine</div>
+        <Section label="Storyline Engine">
           <p style={{ lineHeight: 1.6 }}>{idea.storyline}</p>
-        </div>
+        </Section>
 
         {/* Score summary */}
-        <div className="card" style={sectionStyle}>
-          <div
-            style={{
-              fontSize: 40,
-              fontWeight: 700,
-              color: 'var(--accent)',
-              lineHeight: 1,
-              marginBottom: 8,
-            }}
-          >
+        <div className="card" style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 40, fontWeight: 700, color: 'var(--accent)', lineHeight: 1, marginBottom: 8 }}>
             {idea.avg_score.toFixed(1)}
             <span style={{ fontSize: 20, color: 'var(--muted)', fontWeight: 400 }}> / 5</span>
           </div>
@@ -177,7 +209,7 @@ export default function IdeaDetail() {
 
         {/* Vote form — hidden on own ideas */}
         {idea.user_id !== userId && (
-          <div className="card" style={sectionStyle}>
+          <div className="card" style={{ marginBottom: 24 }}>
             <VoteForm ideaId={idea.id} />
           </div>
         )}
