@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3022,
+    allowedHosts: true,
     proxy: {
       '/mangai/api': {
         target: 'http://localhost:5022',
