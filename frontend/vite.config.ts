@@ -3,8 +3,15 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/mangai/',
   server: {
-    port: 3000,
-    allowedHosts: true
+    host: '0.0.0.0',
+    port: 3022,
+    proxy: {
+      '/mangai/api': {
+        target: 'http://localhost:5022',
+        rewrite: (path) => path.replace(/^\/mangai/, '')
+      }
+    }
   }
 })
